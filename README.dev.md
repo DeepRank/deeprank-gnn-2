@@ -2,20 +2,21 @@
 
 If you're looking for user documentation, go [here](README.md).
 
-## Code editor
+## IDE settings
 
-We use [Visual Studio Code (VS Code)](https://code.visualstudio.com/) as code editor.
-The VS Code settings for this project can be found in [.vscode](.vscode).
-The settings will be automatically loaded and applied when you open the project with VS Code.
-See [the guide](https://code.visualstudio.com/docs/getstarted/settings) for more info about workspace settings of VS Code.
+We use [Visual Studio Code (VS Code)](https://code.visualstudio.com/) as code editor, which we have set up with some
+default [settings](.vscode/settings.json) for formatting. We recommend developers to use VS code with the [recommended extensions](.vscode/extensions.json) to automatically format the code upon saving.
+
+See [VS Code's settings guide](https://code.visualstudio.com/docs/getstarted/settings) for more info.
+
+If using a different IDE, we recommend creating a similar settings file. Feel free to recommend adding this to package
+using via a [pull request](#development-conventions).
 
 ## Package setup
 
-After having followed the [installation instructions](https://github.com/DeepRank/deeprank2#installation) and installed all the dependencies of the package, the repository can be cloned and its editable version can be installed:
+First, follow the [local installation](README.md#localremote-installation) instructions. Next, install the editable version of the package with:
 
 ```bash
-git clone https://github.com/DeepRank/deeprank2
-cd deeprank2
 pip install -e .'[test]'
 ```
 
@@ -28,23 +29,22 @@ Run `pytest tests/test_integration.py` for the quick test or just `pytest` for t
 
 ## Test coverage
 
-In addition to just running the tests to see if they pass, they can be used for coverage statistics, i.e. to determine how much of the package's code is actually executed during tests. In an activated conda environment with the development tools installed, inside the package directory, run:
+In addition to just running the tests to see if they pass, they can be used for coverage statistics, i.e. to determine
+how much of the package's code is actually executed during tests. To see the
+[coverage](https://pytest-cov.readthedocs.io/en/latest/) results in your terminal, run the following in an activated
+conda environment with the test tools installed:
 
 ```bash
 coverage run -m pytest
-```
-
-This runs tests and stores the result in a `.coverage` file. To see the results on the command line, run:
-
-```bash
 coverage report
 ```
 
 `coverage` can also generate output in HTML and other formats; see `coverage help` for more information.
 
-## Linting and Formatting
+## Linting and formatting
 
-We use [ruff](https://docs.astral.sh/ruff/) for linting, sorting imports and formatting of python (notebook) files. The configurations of `ruff` are set in [pyproject.toml](pyproject.toml) file.
+We use [ruff](https://docs.astral.sh/ruff/) for linting, sorting imports and formatting of python (notebook) files. The
+configurations of `ruff` are set [here](.ruff.toml).
 
 If you are using VS code, please install and activate the [Ruff extension](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff) to automatically format and check linting.
 
@@ -54,7 +54,20 @@ We use [prettier](https://prettier.io/) for formatting most other files. If you 
 
 ## Versioning
 
-Bumping the version across all files is done before creating a new package release, running `bump2version [part]` from command line after having installed [bump2version](https://pypi.org/project/bump2version/) on your local environment. Instead of `[part]`, type the part of the version to increase, e.g. minor. The settings in `.bumpversion.cfg` will take care of updating all the files containing version strings.
+We adhere to [semantic versioning](https://semver.org/) standards. In brief this means using `X.Y.Z` versioning, where
+
+- X = `major` version: representing API-incompatible changes from the previous version
+- Y = `minor` version: representing added functionality that is backwards compatible to previous versions
+- Z = `patch` version: representing backward compatible bug fixes were made of previous version
+
+Bumping the version consistently is done using [bump-my-version](https://callowayproject.github.io/bump-my-version/),
+which automatically updates all mentions of the current version throughout the package, as defined in the tool's
+[settings](.bumpversion.toml). Use `major`, `minor`, or `patch` as the version level in the following command to update
+the version:
+
+```bash
+bump-my-version bump <version level>
+```
 
 ## Branching workflow
 
@@ -69,27 +82,32 @@ During the development cycle, three main supporting branches are used:
 - Hotfix branches - Branches that branch off from `main` and must merge into `main` and `dev`: necessary to act immediately upon an undesired status of `main`.
 - Release branches - Branches that branch off from `dev` and must merge into `main` and `dev`: support preparation of a new production release. They allow many minor bug to be fixed and preparation of meta-data for a release.
 
-### Development conventions
+## Development conventions
 
+We highly appreciate external contributions to our package! We do request developers to adhere to the following conventions:
+
+- Issues
+  - Before working on any kind of development, please check existing issues to see whether there has been any
+    discussion and/or ongoing work on this topic.
+  - If no issue exists, please open one to allow discuss whether the development is desirable to the maintainers.
 - Branching
-  - When creating a new branch, please use the following convention: `<issue_number>_<description>_<author_name>`.
   - Always branch from `dev` branch, unless there is the need to fix an undesired status of `main`. See above for more details about the branching workflow adopted.
+  - Our branch naming convention is: `<issue_number>_<description>_<author_name>`.
 - Pull Requests
-  - When creating a pull request, please use the following convention: `<type>: <description>`. Example _types_ are `fix:`, `feat:`, `build:`, `chore:`, `ci:`, `docs:`, `style:`, `refactor:`, `perf:`, `test:`, and others based on the [Angular convention](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#-commit-message-guidelines).
+  - New developments must proceed via a pull request (PR) before they can be merged to either `main` or `dev` branches.
+  - When creating a pull request, please use the following naming convention: `<type>: <description>`. Example _types_
+    are `fix:`, `feat:`, `docs:`, and others based on the [Angular convention](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#-commit-message-guidelines).
 
 ## Making a release
 
-### Automated release workflow:
+### Automated release workflow
 
 1. **IMP0RTANT:** Create a PR for the release branch, targeting the `main` branch. Ensure there are no conflicts and that all checks pass successfully. Release branches are typically: traditional [release branches](https://nvie.com/posts/a-successful-git-branching-model/#release-branches) (these are created from the `dev` branch), or [hotfix branches](https://nvie.com/posts/a-successful-git-branching-model/#hotfix-branches) (these are created directly from the `main` branch).
    - if everything goes well, this PR will automatically be closed after the draft release is created.
 2. Navigate to [Draft Github Release](https://github.com/DeepRank/deeprank2/actions/workflows/release_github.yml)
    on the [Actions](https://github.com/DeepRank/deeprank2/actions) tab.
-3. On the right hand side, you can select the level increase ("patch", "minor", or "major") and which branch to release from.
-   - [Follow semantic versioning conventions](https://semver.org/) to chose the level increase:
-     - `patch`: when backward compatible bug fixes were made
-     - `minor`: when functionality was added in a backward compatible manner
-     - `major`: when API-incompatible changes have been made
+3. On the right hand side, you can select the [version level update](#versioning) ("patch", "minor", or "major") and which branch to release from.
+   - [Follow semantic versioning conventions](https://semver.org/)
    - Note that you cannot release from `main` (the default shown) using the automated workflow. To release from `main`
      directly, you must [create the release manually](#manually-create-a-release).
 4. Visit [Actions](https://github.com/DeepRank/deeprank2/actions) tab to check whether everything went as expected.
@@ -103,9 +121,9 @@ During the development cycle, three main supporting branches are used:
 7. Check/adapt the release notes and make sure that everything is as expected.
 8. Check that "Set as the latest release is checked".
 9. Click green "Publish Release" button to convert the draft to a published release on GitHub.
-   - This will automatically trigger [another GitHub workflow](https://github.com/DeepRank/deeprank2/actions/workflows/release.yml) that will take care of publishing the package on PyPi.
+   - This will automatically trigger [another GitHub workflow](https://github.com/DeepRank/deeprank2/actions/workflows/release_pypi.yml) that will take care of publishing the package on PyPi.
 
-#### Updating the token:
+#### Updating the token
 
 In order for the workflow above to be able to bypass the branch protection on `main` and `dev`, a token with admin priviliges for the current repo is required. Below are instructions on how to create such a token.
 NOTE: the current token (associated to @DaniBodor) allowing to bypass branch protection will expire on 9 July 2025. To update the token do the following:
@@ -116,18 +134,17 @@ NOTE: the current token (associated to @DaniBodor) allowing to bypass branch pro
 3. Click green "Generate token" button on the bottom
 4. Copy the token immediately, as it will not be visible again later.
 5. Navigate to the [secrets settings](https://github.com/DeepRank/deeprank2/settings/secrets/actions).
+   - Note that you need admin priviliges to the current repo to access these settings.
 6. Edit the `GH_RELEASE` key giving your access token as the new value.
 
-### Manually create a release:
+### Manually create a release
 
 0. Make sure you have all required developers tools installed `pip install -e .'[test]'`.
 1. Create a `release-` branch from `main` (if there has been an hotfix) or `dev` (regular new production release).
 2. Prepare the branch for the release (e.g., removing the unnecessary dev files, fix minor bugs if necessary). Do this by ensuring all tests pass `pytest -v` and that linting (`ruff check`) and formatting (`ruff format --check`) conventions are adhered to.
-3. Bump the version using [bump-my-version](https://github.com/callowayproject/bump-my-version): `bump-my-version bump <level>`
-   where level must be one of the following ([following semantic versioning conventions](https://semver.org/)):
-   - `major`: when API-incompatible changes have been made
-   - `minor`: when functionality was added in a backward compatible manner
-   - `patch`: when backward compatible bug fixes were made
+3. Decide on the [version level increase](#versioning), following [semantic versioning
+   conventions](https://semver.org/). Use [bump-my-version](https://github.com/callowayproject/bump-my-version):
+   `bump-my-version bump <level>` to update the version throughout the package.
 4. Merge the release branch into `main` and `dev`.
 5. On the [Releases page](https://github.com/DeepRank/deeprank2/releases):
    1. Click "Draft a new release"
